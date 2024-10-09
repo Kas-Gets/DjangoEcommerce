@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | E-commerce Site{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+  <div class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg shadow-lg p-12 mb-12">
+    <h1 class="text-5xl font-bold mb-4">Welcome to My Store</h1>
+    <p class="text-xl mb-8">Discover amazing products at unbeatable prices!</p>
+    <a href="{% url 'product_list' %}" class="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-200">
+      Shop Now
+    </a>
+  </div>
+
+  <h2 class="text-3xl font-bold mb-8">Featured Products</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {% for product in featured_products|slice:":3" %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-105">
+        <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-64 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">{{ product.name }}</h3>
+          <p class="text-gray-600 mb-4">${{ product.price }}</p>
+          <a href="{% url 'product_detail' product.id %}" class="block text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
+            View Product
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-8">
+    <a href="{% url 'product_list' %}" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-600 transition duration-200">
+      View More Products
+    </a>
+  </div>
+
+  <div class="mt-16 bg-gray-100 rounded-lg p-8">
+    <h2 class="text-3xl font-bold mb-8 text-center">Why Choose Us?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <i class="fas fa-shipping-fast text-4xl text-blue-500 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Fast Shipping</h3>
+        <p class="text-gray-600">Get your products delivered quickly and efficiently.</p>
+      </div>
+      <div class="text-center">
+        <i class="fas fa-undo text-4xl text-blue-500 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Easy Returns</h3>
+        <p class="text-gray-600">Not satisfied? Return your items hassle-free.</p>
+      </div>
+      <div class="text-center">
+        <i class="fas fa-headset text-4xl text-blue-500 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+        <p class="text-gray-600">Our customer service team is always here to help.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-16">
+    <h2 class="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="text-gray-600 mb-4">"Great products and excellent service! I'm a happy customer."</p>
+        <p class="font-semibold">- John Doe</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="text-gray-600 mb-4">"Fast shipping and high-quality items. Highly recommended!"</p>
+        <p class="font-semibold">- Jane Smith</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="text-gray-600 mb-4">"The best online shopping experience I've ever had."</p>
+        <p class="font-semibold">- Mike Johnson</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

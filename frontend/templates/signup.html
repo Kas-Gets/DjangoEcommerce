@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up | E-commerce Site{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+  <div class="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-6 px-8">
+      <h2 class="text-3xl font-bold">Sign Up</h2>
+    </div>
+    <form id="signup-form" class="p-8">
+      {% csrf_token %}
+      <div class="mb-4">
+        <label for="fisrtname" class="block text-gray-700 font-bold mb-2">First Name:</label>
+        <input type="text" id="fname" name="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label for="lastname" class="block text-gray-700 font-bold mb-2">Last Name:</label>
+        <input type="text" id="lname" name="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+        <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label for="Phone" class="block text-gray-700 font-bold mb-2">Phone Number</label>
+        <input type="number" id="phonenumber" name="phonenumber" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label for="birthdate" class="block text-gray-700 font-bold mb-2">Birthdate</label>
+        <input type="date" id="birthdate" name="birthdate" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
+        <input type="password" id="password" name="password2" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+      </div>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+        Sign Up
+      </button>
+    </form>
+    <div class="px-8 pb-8 text-center">
+      <p class="text-gray-600">Already have an account? <a href="{% url 'loginview' %}" class="text-blue-500 hover:underline">Login</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('signup-form').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    // Get form data
+    const fname = document.getElementById('fname').value;
+    const lname = document.getElementById('lname').value;
+    const email = document.getElementById('email').value;
+    const phonenumber = document.getElementById('phonenumber').value;
+    const birthdate = document.getElementById('birthdate').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('http://localhost:8000/v1/api/signup/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Add the CSRF token for Django's security
+            },
+            body: JSON.stringify({
+                first_name: fname,
+                last_name: lname,
+                email: email,
+                phone: phonenumber,
+                birth_date: birthdate,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Redirect or show success message
+            alert('Signup successful');
+            window.location.href = '{% url "loginview" %}';
+        } else {
+            // Handle validation errors
+            alert('Signup failed: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('There was a problem with the signup process');
+    }
+});
+</script>
+{% endblock %}

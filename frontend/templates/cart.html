@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart | E-commerce Site{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4" x-data="{ cartItems: [] }">
+  <h1 class="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="p-4" x-show="cartItems.length === 0">
+      <p class="text-gray-500 text-center">Your cart is empty.</p>
+      <a href="{% url 'product_list' %}" class="block mt-4 text-center text-blue-500 hover:underline">
+        Continue Shopping
+      </a>
+    </div>
+    <div x-show="cartItems.length > 0">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 text-left">Product</th>
+            <th class="px-4 py-2 text-left">Price</th>
+            <th class="px-4 py-2 text-left">Quantity</th>
+            <th class="px-4 py-2 text-left">Total</th>
+            <th class="px-4 py-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="item in cartItems" :key="item.id">
+            <tr>
+              <td class="px-4 py-2">
+                <div class="flex items-center">
+                  <img :src="item.image" :alt="item.name" class="w-16 h-16 object-cover rounded mr-4">
+                  <span x-text="item.name"></span>
+                </div>
+              </td>
+              <td class="px-4 py-2" x-text="'$' + item.price.toFixed(2)"></td>
+              <td class="px-4 py-2">
+                <input type="number" x-model="item.quantity" min="1" class="w-16 px-2 py-1 border rounded">
+              </td>
+              <td class="px-4 py-2" x-text="'$' + (item.price * item.quantity).toFixed(2)"></td>
+              <td class="px-4 py-2">
+                <button @click="cartItems = cartItems.filter(i => i.id !== item.id)" class="text-red-500 hover:text-red-700">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div class="p-4 border-t">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold">Total:</span>
+          <span class="font-bold text-xl" x-text="'$' + cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)"></span>
+        </div>
+        <a href="{% url 'checkout' %}" class="block w-full mt-4 bg-blue-500 text-white text-center px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
+          Proceed to Checkout
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('cartItems', () => ({
+      cartItems: [
+        { id: 1, name: 'Product 1', price: 19.99, quantity: 1, image: 'https://via.placeholder.com/150' },
+        { id: 2, name: 'Product 2', price: 29.99, quantity: 2, image: 'https://via.placeholder.com/150' },
+      ]
+    }))
+  })
+</script>
+{% endblock %}

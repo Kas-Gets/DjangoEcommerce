@@ -1,0 +1,176 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Products |
+E-commerce Site{% endblock %} {% block content %}
+<div
+  class="container mx-auto px-4"
+  x-data="{ 
+    view: 'grid', 
+    products: [], 
+    fetchProducts() {
+        $.ajax({
+            url: 'http://localhost:8000/v1/api/products/',  // Ensure this URL is correct
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                this.products = data; // Assign to Alpine.js context
+                console.log(data); // Debug output to check if data is received
+            }.bind(this), // Bind to Alpine.js context
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching products:', textStatus, errorThrown);
+            }
+        });
+    }
+}"
+  x-init="fetchProducts()"
+>
+  <h1 class="text-3xl font-bold mb-8">All Products</h1>
+  <div class="flex justify-between items-center mb-8">
+    <div class="flex items-center">
+      <label for="sort" class="mr-2">Sort by:</label>
+      <select id="sort" x-model="sortBy" class="border rounded px-2 py-1">
+        <option value="name">Name</option>
+        <option value="price_low">Price: Low to High</option>
+        <option value="price_high">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="flex items-center">
+      <button
+        @click="view = 'grid'"
+        :class="{ 'text-blue-500': view === 'grid' }"
+        class="mr-4"
+      >
+        <i class="fas fa-th-large"></i>
+      </button>
+      <button
+        @click="view = 'list'"
+        :class="{ 'text-blue-500': view === 'list' }"
+      >
+        <i class="fas fa-list"></i>
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-wrap -mx-4">
+    <div class="w-full md:w-1/4 px-4 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Filters</h2>
+        <div class="mb-4">
+          <h3 class="font-semibold mb-2">Categories</h3>
+          <template x-for="category in categories" :key="category">
+            <div class="flex items-center mb-2">
+              <input
+                type="checkbox"
+                :id="category"
+                :value="category"
+                x-model="selectedCategories"
+                class="mr-2"
+              />
+              <label :for="category" x-text="category"></label>
+            </div>
+          </template>
+        </div>
+        <div class="mb-4">
+          <h3 class="font-semibold mb-2">Price Range</h3>
+          <div class="flex items-center">
+            <input
+              type="number"
+              x-model="minPrice"
+              class="w-1/2 border rounded px-2 py-1 mr-2"
+              placeholder="Min"
+            />
+            <input
+              type="number"
+              x-model="maxPrice"
+              class="w-1/2 border rounded px-2 py-1"
+              placeholder="Max"
+            />
+          </div>
+        </div>
+        <button
+          @click="filterProducts()"
+          class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
+        >
+          Apply Filters
+        </button>
+      </div>
+    </div>
+    <div class="w-full md:w-3/4 px-4">
+      <div
+        x-show="view === 'grid'"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <template x-for="product in products" :key="product.id">
+          <div
+            class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-105"
+          >
+            <img
+              src="https://via.placeholder.com/300x200"
+              :alt="product.title"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6">
+              <h3
+                class="text-xl font-semibold mb-2"
+                x-text="product.title"
+              ></h3>
+              <p
+                class="text-gray-600 mb-4"
+                x-text="'$' + product.unit_price"
+              ></p>
+              <p
+                class="text-gray-600 mb-4"
+                x-text="'Inventory: ' + product.inventory"
+              ></p>
+              <p
+                class="text-gray-600 mb-4"
+                x-text="'Description: ' + product.description"
+              ></p>
+
+              <a
+                :href="'/products/' + product.id"
+                class="block text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
+              >
+                View Product
+              </a>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div x-show="view === 'list'" class="space-y-6">
+        <template x-for="product in products" :key="product.id">
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="flex">
+              <img
+                src="https://via.placeholder.com/300x200"
+                :alt="product.title"
+                class="w-48 h-48 object-cover"
+              />
+              <div class="p-6 flex-grow">
+                <h3
+                  class="text-xl font-semibold mb-2"
+                  x-text="product.title"
+                ></h3>
+                <p
+                  class="text-gray-600 mb-4"
+                  x-text="'$' + product.unit_price"
+                ></p>
+                <p
+                  class="text-gray-700 mb-4"
+                  x-text="'Description: ' + product.description"
+                ></p>
+                <a
+                  :href="'/products/' + product.id"
+                  class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
+                >
+                  View Product
+                </a>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+  <div class="mt-8">
+    <!-- Add pagination here -->
+  </div>
+</div>
+{% endblock %}
